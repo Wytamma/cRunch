@@ -12,7 +12,7 @@ downloadButton <- function(...) {
 ui <- fluidPage(
   # App title ----
   titlePanel("cRunch your data!", ),
-  h4("This Shiny application is designed for interactive data analysis and visualization. It allows users to upload CSV files, apply filters using a dynamic query builder, and visualize the data. Additionally, users can download the filtered dataset for offline analysis."),
+  h4("This Shiny application is designed for interactive data analysis and visualization. It allows users to upload CSV files, apply filters using a dynamic query builder, and visualize the data. Additionally, users can download the filtered dataset for offline analysis.", "Source code available on" , a("GitHub.", href="https://github.com/Wytamma/cRunch")),
 
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
