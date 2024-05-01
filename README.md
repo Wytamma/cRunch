@@ -1,7 +1,13 @@
+![](images/6c32010b-0d77-4404-a38c-1cd3676611a7.webp)
 # cRunch Shiny App
 
-## Overview
 cRunch is a Shiny application designed for interactive data analysis and visualization. It allows users to upload CSV files, apply filters using a dynamic query builder, and visualize the data in a table format. Additionally, users can download the filtered dataset for offline analysis.
+
+You can find a version of the app here ->
+[blog.wytamma.com/cRunch](blog.wytamma.com/cRunch/)
+
+>[!important]
+>cRunch operates entirely on the client-side, meaning all computations are performed in your browser. Your data remains on your computer and is never transmitted to external servers. This ensures that cRunch is safe for handling sensitive data, as it maintains your privacy by not exposing your information beyond your local environment.
 
 ## Features
 - **CSV File Upload**: Users can upload CSV files to be analyzed directly in the app.
@@ -21,7 +27,7 @@ To run cRunch locally, you need to have R and Shiny installed on your machine. F
      ```R
      install.packages("shiny")
      install.packages("DT")
-     install.packages("jqbr")  # Note: Replace with actual package if jqbr is a placeholder
+     install.packages("jqbr")
      ```
 
 3. **Run the App**:
