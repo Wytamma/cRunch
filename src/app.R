@@ -3,7 +3,7 @@ library(jqbr)
 
 ui <- fluidPage(
   # App title ----
-  titlePanel("cRunch"),
+  titlePanel("cRunch - query your data!"),
 
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
