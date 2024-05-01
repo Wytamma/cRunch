@@ -1,5 +1,6 @@
 library(shiny)
 library(jqbr)
+library(ggplot2)
 
 # Workaround for Chromium Issue 468227
 downloadButton <- function(...) {
@@ -10,14 +11,16 @@ downloadButton <- function(...) {
 
 ui <- fluidPage(
   # App title ----
-  titlePanel("cRunch - query your data!"),
+  titlePanel("cRunch your data!"),
 
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
-
     # Sidebar panel for inputs ----
     sidebarPanel(
-
+      plotOutput("plot"),
+      selectInput("xcol", "X-Axis", choices = NULL),
+      selectInput("ycol", "Y-Axis", choices = NULL),
+      selectInput("groupcol", "Group By", choices = NULL, selected = "------"),
       # Input: Select a file ----
       fileInput("file1", "Choose CSV File",
                 multiple = FALSE,
@@ -77,11 +80,11 @@ create_filters <- function(df) {
 }
 
 
-server <- function(input, output) {
+server <- function(input, output, session) {
   # Reactive expression to hold the current dataframe
   reactive_data <- reactive({
     if (is.null(input$file1)) {
-      datapath <- "data/nextclade.csv"
+      return(iris)
     } else {
       datapath <- input$file1$datapath
     }
@@ -95,12 +98,41 @@ server <- function(input, output) {
 
     df
   })
-
-  # Render DataTable
-  output$table <- DT::renderDataTable({
+  # Reactive expression for the filtered data
+  filtered_data <- reactive({
     df <- reactive_data()
-    df_filtered <- filter_table(data = df, filters = input$qb)  # Assuming `filter_table` applies the filters
-    DT::datatable(df_filtered, options = list(scrollX = TRUE, autoWidth = TRUE, paging = TRUE))
+    if (is.null(input$qb)) return(df)  # Return unfiltered data if no filters are set
+    filter_table(data = df, filters = input$qb)  # Assuming filter_table function applies the query filters
+  })
+  # Update the choices for xcol, ycol, and groupcol based on the uploaded file
+  observe({
+    df <- reactive_data()
+    if (!is.null(df)) {
+      colnames <- names(df)
+      updateSelectInput(session, "xcol", choices = colnames, selected = colnames[1])
+      updateSelectInput(session, "ycol", choices = colnames, selected = colnames[2])
+      updateSelectInput(session, "groupcol", choices = c("------", colnames))
+    }
+  })
+
+  # Generate plot based on input selections and filtered data
+  output$plot <- renderPlot({
+    req(filtered_data())  # Ensure the filtered data is available
+    df <- filtered_data()
+    if (is.null(input$xcol) || is.null(input$ycol)) return(NULL)
+    p <- ggplot(df, aes_string(x = input$xcol, y = input$ycol))
+    if (input$groupcol != "------" && input$groupcol != "") {
+      p <- p + aes_string(color = input$groupcol)
+    }
+    p + geom_point() +
+      labs(x = input$xcol, y = input$ycol) +
+      theme_minimal()
+  })
+
+  # Render DataTable using filtered data
+  output$table <- DT::renderDataTable({
+    df_filtered <- filtered_data()
+    DT::datatable(df_filtered, options = list(scrollX = TRUE, paging = TRUE))
   })
 
   # Dynamic Query Builder UI
@@ -115,11 +147,7 @@ server <- function(input, output) {
       paste("filtered-data-", Sys.Date(), ".csv", sep="")
     },
     content = function(file) {
-      # Access the latest filtered data
-      df_filtered <- data.table::copy(isolate({
-        df <- reactive_data()
-        filter_table(data = df, filters = input$qb)
-      }))
+      df_filtered <- filtered_data()  # Get the latest filtered data
       write.csv(df_filtered, file, row.names = FALSE)
     }
   )
