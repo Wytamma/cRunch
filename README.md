@@ -1,76 +1,50 @@
-![](images/banner.png)
+# cRunch Shiny App
 
-# Host Client Side R Shiny Web Apps On Github For Free
-[![Build](https://github.com/Wytamma/shiny-github/actions/workflows/build.yml/badge.svg)](https://github.com/Wytamma/shiny-github/actions/workflows/build.yml)
+## Overview
+cRunch is a Shiny application designed for interactive data analysis and visualization. It allows users to upload CSV files, apply filters using a dynamic query builder, and visualize the data in a table format. Additionally, users can download the filtered dataset for offline analysis.
 
-## Introduction
+## Features
+- **CSV File Upload**: Users can upload CSV files to be analyzed directly in the app.
+- **Data Filtering**: A dynamic query builder allows users to specify filters based on the data columns.
+- **Data Visualization**: Data is displayed in a scrollable and sortable table, making it easy to browse through even large datasets.
+- **Data Download**: Users can download the filtered data as a CSV file, allowing for further analysis outside the app.
 
-This is a simple guide to hosting client-side shiny apps on GitHub for free. This is a great way to host your web apps for free and also to learn about Git and GitHub. The template uses [`shinylive`](https://github.com/posit-dev/shinylive) to build a WebAssembly/JavaScript version of the shiny app in `src`. GitHub Pages is used to host the web app. This process is all automatically handled by GitHub Actions every time the shiny app source code changes.
+## Installation
 
-## Steps
+To run cRunch locally, you need to have R and Shiny installed on your machine. Follow these steps to get started:
 
-1. Create a github account if you don't already have one.
-2. Use this repository as a template by clicking the green "Use this template" button.
+1. **Install R**:
+   - Download and install R from [The Comprehensive R Archive Network (CRAN)](https://cran.r-project.org/).
 
-[![](images/use-this-template.png)](https://github.com/new?template_name=shiny-github&template_owner=Wytamma)
+2. **Install Shiny and Required Packages**:
+   - Open R and install the Shiny package along with other required packages by running the following commands:
+     ```R
+     install.packages("shiny")
+     install.packages("DT")
+     install.packages("jqbr")  # Note: Replace with actual package if jqbr is a placeholder
+     ```
 
-> Note: You must create a public repo (unless you have github pro)
+3. **Run the App**:
+   - You can run the app by saving the script files `ui.R` and `server.R` in a directory and then running the following command in R:
+     ```R
+     library(shiny)
+     runApp('path_to_app_directory')
+     ```
 
-3. Ensure the workflow permissions are set to read and write.
+## Usage
 
-Go to setting: `Actions` > `General` > `Workflow permissions` as follows:
-Read and write permissions
-(Workflows have read and write permissions in the repository for all scopes.)
-![](images/workflow-permissions.png)
+### Uploading Data
+- Click the "Choose CSV File" button in the sidebar to upload your data file. Ensure your CSV file has the appropriate format, using commas, semicolons, or tabs as separators.
 
-4. Clone the repository to your local machine.
+### Applying Filters
+- After uploading the data, use the query builder in the sidebar to apply filters based on your data's specific attributes.
 
-```bash
-git clone <YOUR USERNAME>/<YOUR REPO>
-```
+### Viewing and Downloading Data
+- The main panel displays the data in a DataTable. You can sort and scroll through this table to review your data.
+- Use the "Download Data" button to save the currently viewed (and filtered) data to your machine.
 
-Or use RStudio to clone the repository.
+## Contributing
+Contributions to cRunch are welcome! Please feel free to fork the repository, make changes, and submit pull requests. You can also open issues if you find bugs or have feature suggestions.
 
-`RStudio` > `New Project` > `Version Control` > `Git` > `Repository URL`: \<YOUR USERNAME>/\<YOUR REPO>
-
-5. Add your shiny app files to the `src` folder (You can use the example files to start with).
-
-6. Commit and push your changes to github.
-    
-```bash
-git add .
-git commit -m "Add shiny app files"
-git push
-```
-
-7. Back in your repository (on github.com). Go to the `Actions` tab and you should see a workflow running. This workflow will build your shiny app and deploy it to the gh-pages branch. Wait for the Action to finish.
-
-> For details on what the workflow is doing see [build.yml](.github/workflows/build.yml)
-
-8. Go to settings and scroll down to the `Pages` section. Select Deploy from branch as the source and select the `gh-pages` as the branch and click save.
-
-![](images/pages.png)
-
-The pages build and deployment action should start running. Once it's finished you should see a link to your shiny app. It may take a few minutes for the link to work.
-
-![](images/deploy.png)
-
-## Example
-
-Here is an example of a shiny app hosted on github pages: http://blog.wytamma.com/shiny-github/
-
-## FAQ
-> Why does is take so long to load?
-
-As the shiny app is running in the client's browser, the app's dependencies must be downloaded to the client's browser. This can take a while depending on the size of the app and the client's internet connection. However, once the dependencies are downloaded once they will be cached in the client's browser and the app will load much faster in the future.
-
-> Why does the app not load?
-
-Client-side shiny apps only work with pre-compiled dependencies. This means that you cannot use packages that require compilation such as `sf` and `rstan`. At list of packages that can be used can be found at [https://repo.r-wasm.org/](https://repo.r-wasm.org/).
-
-> The build action fail with the following error: `The requested URL returned error: 403`
-
-Please change the repository setting (Go to `Actions` > `General` > `Workflow permissions`) as follows:
-Read and write permissions
-(Workflows have read and write permissions in the repository for all scopes.)
-![](images/workflow-permissions.png)
+## License
+This project is open-source and available under the [MIT License](https://opensource.org/licenses/MIT).
