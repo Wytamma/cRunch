@@ -1,51 +1,121 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
+library(jqbr)
 
-# Define UI for application that draws a histogram
 ui <- fluidPage(
+  # App title ----
+  titlePanel("cRunch"),
 
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
+  # Sidebar layout with input and output definitions ----
+  sidebarLayout(
 
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
+    # Sidebar panel for inputs ----
+    sidebarPanel(
 
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
+      # Input: Select a file ----
+      fileInput("file1", "Choose CSV File",
+                multiple = FALSE,
+                accept = c("text/csv",
+                           "text/comma-separated-values,text/plain",
+                           ".csv")),
+
+      # Horizontal line ----
+      tags$hr(),
+
+
+      # Input: Select separator ----
+      radioButtons("sep", "Separator",
+                   choices = c(Comma = ",",
+                               Semicolon = ";",
+                               Tab = "\t"),
+                   selected = ","),
+
+      # Input: Select quotes ----
+      radioButtons("quote", "Quote",
+                   choices = c(None = "",
+                               "Double Quote" = '"',
+                               "Single Quote" = "'"),
+                   selected = '"'),
+      downloadButton("downloadData", "Download Data")
+    ),
+
+    # Main panel for displaying outputs ----
+    mainPanel(
+      DT::dataTableOutput("table"),
+      useQueryBuilder(),
+      uiOutput("query_builder")  # Dynamic UI for the query builder,
     )
+
+  )
 )
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
+create_filters <- function(df) {
+  # Check the type of each column and create corresponding filter
+  filters <- lapply(names(df), function(col) {
+    col_type <- class(df[[col]])
 
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    if (col_type %in% c("factor", "character")) {
+      list(id = col, title = col, type = "string")
+    } else if (col_type %in% c("integer", "numeric", "double")) {
+      list(id = col, title = col, type = "double",
+           validation = list(min = min(df[[col]], na.rm = TRUE), max = max(df[[col]], na.rm = TRUE)),
+           step = 0.01)
+    } else if (col_type %in% c("Date", "POSIXct")) {
+      list(id = col, title = col, type = "date")
+    } else {
+      list(id = col, title = col, type = "string") # Default fallback
+    }
+  })
 
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
-    })
+  return(filters)
 }
 
-# Run the application 
-shinyApp(ui = ui, server = server)
+
+server <- function(input, output) {
+  # Reactive expression to hold the current dataframe
+  reactive_data <- reactive({
+    if (is.null(input$file1)) {
+      datapath <- "data/nextclade.csv"
+    } else {
+      datapath <- input$file1$datapath
+    }
+
+    tryCatch({
+      df <- read.csv(datapath, header = TRUE, sep = input$sep, quote = input$quote)
+    }, error = function(e) {
+      print(e)
+      stop(safeError(e))
+    })
+
+    df
+  })
+
+  # Render DataTable
+  output$table <- DT::renderDataTable({
+    df <- reactive_data()
+    df_filtered <- filter_table(data = df, filters = input$qb)  # Assuming `filter_table` applies the filters
+    DT::datatable(df_filtered, options = list(scrollX = TRUE, autoWidth = TRUE, paging = TRUE))
+  })
+
+  # Dynamic Query Builder UI
+  output$query_builder <- renderUI({
+    df <- reactive_data()
+    queryBuilderInput("qb", filters = create_filters(df))
+  })
+
+  # Download handler for filtered data
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste("filtered-data-", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      # Access the latest filtered data
+      df_filtered <- data.table::copy(isolate({
+        df <- reactive_data()
+        filter_table(data = df, filters = input$qb)
+      }))
+      write.csv(df_filtered, file, row.names = FALSE)
+    }
+  )
+}
+
+shinyApp(ui, server)
