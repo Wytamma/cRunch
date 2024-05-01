@@ -144,7 +144,7 @@ server <- function(input, output, session) {
   # Download handler for filtered data
   output$downloadData <- downloadHandler(
     filename = function() {
-      paste("filtered-data-", Sys.Date(), ".csv", sep="")
+      paste("cRunch-", sub(" ", "T", as.character(Sys.time())), ".csv", sep="")
     },
     content = function(file) {
       df_filtered <- filtered_data()  # Get the latest filtered data
