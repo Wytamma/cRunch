@@ -27,7 +27,7 @@ To run cRunch locally, you need to have R and Shiny installed on your machine. F
      ```R
      install.packages("shiny")
      install.packages("DT")
-     install.packages("jqbr")  # Note: Replace with actual package if jqbr is a placeholder
+     install.packages("jqbr")
      ```
 
 3. **Run the App**:
