@@ -18,18 +18,18 @@ ui <- fluidPage(
     # Sidebar panel for inputs ----
     sidebarPanel(
       plotOutput("plot"),
+      tags$hr(),
       selectInput("xcol", "X-Axis", choices = NULL),
       selectInput("ycol", "Y-Axis", choices = NULL),
       selectInput("groupcol", "Group By", choices = NULL, selected = "------"),
+      # Horizontal line ----
+      tags$hr(),
       # Input: Select a file ----
       fileInput("file1", "Choose CSV File",
                 multiple = FALSE,
                 accept = c("text/csv",
                            "text/comma-separated-values,text/plain",
                            ".csv")),
-
-      # Horizontal line ----
-      tags$hr(),
 
 
       # Input: Select separator ----
