@@ -1,7 +1,7 @@
 ![](images/6c32010b-0d77-4404-a38c-1cd3676611a7.webp)
-# cRunch Shiny App
+# cRunch
 
-cRunch is a Shiny application designed for interactive data analysis and visualization. It allows users to upload CSV files, apply filters using a dynamic query builder, and visualize the data in a table format. Additionally, users can download the filtered dataset for offline analysis.
+cRunch is a Shiny application designed for interactive data analysis and visualization. It allows users to upload CSV files, apply filters using a dynamic query builder, and visualize the data. Additionally, users can download the filtered dataset for offline analysis.
 
 You can find a version of the app here ->
 [blog.wytamma.com/cRunch](blog.wytamma.com/cRunch/)
