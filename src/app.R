@@ -1,6 +1,13 @@
 library(shiny)
 library(jqbr)
 
+# Workaround for Chromium Issue 468227
+downloadButton <- function(...) {
+  tag <- shiny::downloadButton(...)
+  tag$attribs$download <- NULL
+  tag
+}
+
 ui <- fluidPage(
   # App title ----
   titlePanel("cRunch - query your data!"),
