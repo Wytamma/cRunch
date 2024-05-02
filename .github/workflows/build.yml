@@ -31,8 +31,7 @@ jobs:
         run: Rscript -e 'install.packages("shinylive")'
 
       - name: Build Site
-        run: Rscript -e 'shinylive::export("src", "site")'
-        run: echo "crunch.wytamma.com" > site/CNAME
+        run: Rscript -e 'shinylive::export("src", "site")' && echo "crunch.wytamma.com" > site/CNAME
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
