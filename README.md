@@ -9,6 +9,8 @@ You can find a version of the app here ->
 >[!important]
 >cRunch operates entirely on the client-side, meaning all computations are performed in your browser. Your data remains on your computer and is never transmitted to external servers. This ensures that cRunch is safe for handling sensitive data, as it maintains your privacy by not exposing your information beyond your local environment.
 
+<img  alt="image" src="https://github.com/Wytamma/cRunch/assets/13726005/95e0f814-a1e4-4f78-8f0d-779bba9b0e8e">
+
 ## Features
 - **CSV File Upload**: Users can upload CSV files to be analyzed directly in the app.
 - **Data Filtering**: A dynamic query builder allows users to specify filters based on the data columns.
