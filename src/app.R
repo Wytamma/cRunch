@@ -9,6 +9,8 @@ library(tools)
 source("components/dataTable.R")
 source("components/summary.R")
 source("components/scatterPlot.R")
+source("components/histPlot.R")
+source("components/boxPlot.R")
 source("components/sidebar.R")
 
 
@@ -32,6 +34,8 @@ ui <- page_navbar(
   sidebar = sidebar(uiOutput("sidebar"), width = 400),
   nav_panel("Summary", uiOutput("summary_panel")),
   nav_panel("Scatter", uiOutput("scatter_plot")),
+  nav_panel("Histogram", uiOutput("hist_plot")),
+  nav_panel("Box", uiOutput("box_plot")),
   nav_panel("Data", uiOutput("table_panel")),
 )
 
@@ -88,6 +92,13 @@ server <- function(input, output, session) {
     scatterPlotComponent(input, output, session, filtered_data)
   })
 
+  output$hist_plot <- renderUI({
+    histogramPlotComponent(input, output, session, filtered_data)
+  })
+
+  output$box_plot <- renderUI({
+    boxPlotComponent(input, output, session, filtered_data)
+  })
 
 }
 
