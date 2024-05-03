@@ -37,6 +37,14 @@ ui <- page_navbar(
   nav_panel("Histogram", uiOutput("hist_plot")),
   nav_panel("Box", uiOutput("box_plot")),
   nav_panel("Data", uiOutput("table_panel")),
+  nav_spacer(),
+  nav_item(
+    tags$a(
+      bs_icon("github"), "Code",
+      href = "https://github.com/Wytamma/cRunch",
+      target = "_blank"
+    )
+  )
 )
 
 server <- function(input, output, session) {
